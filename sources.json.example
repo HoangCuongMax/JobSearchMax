@@ -1,0 +1,22 @@
+{
+  "seek": [
+    "https://www.seek.com.au/python-jobs",
+    "https://www.seek.com.au/data-engineer-jobs-in-sydney"
+  ],
+  "indeed": [
+    "https://au.indeed.com/jobs?q=senior+developer",
+    "https://au.indeed.com/jobs?q=data+analyst&l=melbourne"
+  ],
+  "linkedin": [
+    "https://www.linkedin.com/jobs/search/?keywords=python"
+  ],
+  "custom_urls": [
+    "https://careers.amazon.com/en/search?keywords=australia",
+    "https://www.google.com/careers/students/locations/australia/",
+    "https://jobs.lever.co/anthropic",
+    "https://boards.greenhouse.io/openai",
+    "https://stripe.com/en-au/careers/search",
+    "https://careers.github.com",
+    "https://jobs.miraheze.org/"
+  ]
+}

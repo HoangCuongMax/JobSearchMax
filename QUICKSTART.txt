@@ -1,0 +1,137 @@
+================================================================================
+                   JOB CRAWLER & DASHBOARD - QUICK START
+================================================================================
+
+You now have a complete job tracking system! Here's how to get started:
+
+STEP 1: OPEN THE DASHBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Open job_dashboard.html in your web browser (Chrome, Firefox, Safari, Edge)
+• Bookmark it for quick access
+• All data is saved locally in your browser
+
+
+STEP 2: ADD YOUR FIRST JOBS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Option A - Copy sample data:
+  1. Open sample_jobs.json
+  2. Copy all the content
+  3. In dashboard, click "Import Jobs"
+  4. Paste and click "✅ Import Jobs"
+  5. You'll see 5 example jobs loaded!
+
+Option B - Add your own jobs:
+  1. Click "Import Jobs" in dashboard
+  2. Paste your own job listing as JSON
+  3. Each job needs: title, company, location, salary, url, platform, description
+
+
+STEP 3: SET YOUR KEYWORDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Type keywords separated by commas: "Python, Data, AWS"
+• The dashboard will score each job 0-100% based on matches
+• Green cards = high match (75%+)
+• Yellow cards = medium match (50-75%)
+• Red cards = low match (<50%)
+
+
+STEP 4: FILTER & FIND OPPORTUNITIES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Location: Type "Sydney" to find jobs in that area
+• Salary: Use sliders to set min/max salary range
+• Platform: Filter by LinkedIn, Seek, Indeed, etc.
+• Status: Filter by New, Applied, Interested, Rejected
+
+Click "Reset Filters" to clear all at once
+
+
+STEP 5: TRACK YOUR APPLICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Each job card has buttons:
+  • "Apply" - Mark as applied (button turns green)
+  • "View" - Open job link in new tab
+  • "Delete" - Remove from your list
+
+Add notes to each job for reminders (upcoming interview, salary negotiation notes, etc.)
+
+
+STEP 6: SET UP DAILY CRAWLING (OPTIONAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For now, manual imports work great. But if you want automation:
+
+ON WINDOWS:
+  1. Open job_crawler.py
+  2. Uncomment the example at the bottom to add jobs
+  3. Open Task Scheduler
+  4. Create a task to run "python job_crawler.py" daily at 9 AM
+  
+ON MAC/LINUX:
+  1. Edit your crontab: crontab -e
+  2. Add: 0 9 * * * /usr/bin/python3 /path/to/job_crawler.py
+  3. Save and exit
+
+Then jobs will update automatically every day!
+
+
+STEP 7: CUSTOMIZE JOB SOURCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Edit sources.json to add your job search URLs:
+
+  {
+    "custom_urls": [
+      "https://careers.company.com/jobs",
+      "https://seek.com.au/python-jobs",
+      "https://indeed.com.au/jobs?q=data"
+    ]
+  }
+
+
+EXAMPLE WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Monday morning: Job alerts come in your email
+2. Copy job listings from Seek/LinkedIn into JSON format
+3. Click "Import Jobs" → paste → import
+4. Set filters (keywords: "Python, AWS", location: "Sydney")
+5. Review high-match jobs (75%+)
+6. Click "View" to read full listing
+7. Click "Apply" when ready
+8. Add notes: "Applied 7-Jul, follow up 14-Jul"
+9. Repeat when new alerts arrive
+
+
+KEYBOARD SHORTCUTS & TIPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+• Middle-click job card to open in new tab
+• Use browser back button to return to dashboard
+• Data auto-saves to browser (no action needed)
+• Clear browser data = lose job list (backup first!)
+
+
+COMMON QUESTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Q: Where is my data stored?
+A: Locally on your computer, in your browser storage. No cloud uploads.
+
+Q: Can I use this on my phone?
+A: Yes! Open job_dashboard.html on mobile Safari or Chrome.
+
+Q: How do I backup my data?
+A: In dashboard, right-click → "Inspect" → Console → 
+   localStorage.getItem('jobs') → copy the output
+
+Q: Can I share jobs with a friend?
+A: Yes! Export your jobs JSON and they can import it into their dashboard.
+
+Q: What if JavaScript is disabled?
+A: The dashboard needs JavaScript. Enable it in your browser settings.
+
+
+YOU'RE ALL SET! 🚀
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Next: Open job_dashboard.html → Import sample_jobs.json → Start filtering!
+
+For more details, see README.md
+
+Good luck with your job search! 💼

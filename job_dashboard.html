@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .control-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-item label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="range"],
+        select {
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .range-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            padding: 0;
+        }
+
+        .range-value {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .jobs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .job-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .job-card.high-relevance {
+            border-left-color: #10b981;
+        }
+
+        .job-card.medium-relevance {
+            border-left-color: #f59e0b;
+        }
+
+        .job-card.low-relevance {
+            border-left-color: #ef4444;
+        }
+
+        .job-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .job-company {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .job-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-platform {
+            background: #e0e7ff;
+            color: #667eea;
+        }
+
+        .badge-status {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .relevance-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .relevance-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .relevance-score {
+            font-size: 12px;
+            color: #667eea;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .job-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 8px 12px;
+            font-size: 12px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .action-btn.applied {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #059669;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 60px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .empty-state h2 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .data-input {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .data-input textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #0c4a6e;
+        }
+
+        @media (max-width: 768px) {
+            .jobs-container {
+                grid-template-columns: 1fr;
+            }
+
+            .control-group {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function JobDashboard() {
+            const [jobs, setJobs] = useState([]);
+            const [keywords, setKeywords] = useState("");
+            const [locationFilter, setLocationFilter] = useState("");
+            const [salaryMin, setSalaryMin] = useState(0);
+            const [salaryMax, setSalaryMax] = useState(500000);
+            const [statusFilter, setStatusFilter] = useState("all");
+            const [platformFilter, setPlatformFilter] = useState("all");
+            const [jsonInput, setJsonInput] = useState("");
+            const [showDataInput, setShowDataInput] = useState(false);
+
+            // Load jobs from localStorage
+            useEffect(() => {
+                const stored = localStorage.getItem("jobs");
+                if (stored) {
+                    try {
+                        setJobs(JSON.parse(stored));
+                    } catch (e) {
+                        console.error("Failed to load jobs:", e);
+                    }
+                }
+            }, []);
+
+            // Save jobs to localStorage
+            useEffect(() => {
+                localStorage.setItem("jobs", JSON.stringify(jobs));
+            }, [jobs]);
+
+            const handleImportJSON = () => {
+                try {
+                    const parsed = JSON.parse(jsonInput);
+                    const jobsArray = Array.isArray(parsed) ? parsed : [parsed];
+                    
+                    // Merge with existing jobs, avoid duplicates
+                    const existingUrls = new Set(jobs.map(j => j.url));
+                    const newJobs = jobsArray.filter(j => !existingUrls.has(j.url));
+                    
+                    setJobs([...jobs, ...newJobs]);
+                    setJsonInput("");
+                    setShowDataInput(false);
+                    alert(`✅ Imported ${newJobs.length} new jobs!`);
+                } catch (e) {
+                    alert("❌ Invalid JSON: " + e.message);
+                }
+            };
+
+            const calculateRelevance = (job) => {
+                if (!keywords) return 50;
+                const text = `${job.title} ${job.description || ""}`.toLowerCase();
+                const keywordList = keywords.split(",").map(k => k.trim().toLowerCase());
+                const matches = keywordList.filter(k => text.includes(k)).length;
+                return (matches / keywordList.length) * 100;
+            };
+
+            const isJobMatch = (job) => {
+                // Location filter
+                if (locationFilter && !job.location.toLowerCase().includes(locationFilter.toLowerCase())) {
+                    return false;
+                }
+
+                // Salary filter
+                const mid = job.salary_max ? (job.salary_min + job.salary_max) / 2 : job.salary_min;
+                if (mid && (mid < salaryMin || mid > salaryMax)) {
+                    return false;
+                }
+
+                // Status filter
+                if (statusFilter !== "all" && job.status !== statusFilter) {
+                    return false;
+                }
+
+                // Platform filter
+                if (platformFilter !== "all" && job.platform !== platformFilter) {
+                    return false;
+                }
+
+                return true;
+            };
+
+            const filteredJobs = jobs.filter(isJobMatch).map(job => ({
+                ...job,
+                relevance_score: calculateRelevance(job)
+            })).sort((a, b) => b.relevance_score - a.relevance_score);
+
+            const updateJobStatus = (jobId, newStatus) => {
+                setJobs(jobs.map(j => 
+                    j.id === jobId ? { ...j, status: newStatus } : j
+                ));
+            };
+
+            const updateJobNotes = (jobId, notes) => {
+                setJobs(jobs.map(j => 
+                    j.id === jobId ? { ...j, notes } : j
+                ));
+            };
+
+            const deleteJob = (jobId) => {
+                if (confirm("Delete this job?")) {
+                    setJobs(jobs.filter(j => j.id !== jobId));
+                }
+            };
+
+            const relevanceStats = () => {
+                const scores = filteredJobs.map(j => j.relevance_score);
+                return {
+                    total: filteredJobs.length,
+                    avg: scores.length ? (scores.reduce((a, b) => a + b) / scores.length).toFixed(1) : 0,
+                    highMatch: scores.filter(s => s >= 75).length,
+                    salaryRange: filteredJobs.length ? `$${Math.min(...filteredJobs.map(j => j.salary_min || 0)).toLocaleString()} - $${Math.max(...filteredJobs.map(j => j.salary_max || 0)).toLocaleString()}` : "N/A"
+                };
+            };
+
+            const stats = relevanceStats();
+            const platforms = [...new Set(jobs.map(j => j.platform))];
+
+            return (
+                <div className="container">
+                    {/* Header */}
+                    <div className="header">
+                        <h1>🎯 Job Opportunity Dashboard</h1>
+                        <p>Smart job filtering, relevance scoring, and application tracking</p>
+                        
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="number">{stats.total}</div>
+                                <div className="label">Total Jobs</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="number">{stats.avg}%</div>
+                                <div className="label">Avg Relevance</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="number">{stats.highMatch}</div>
+                                <div className="label">High Match (75%+)</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="number">{jobs.filter(j => j.status === "applied").length}</div>
+                                <div className="label">Applied</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Data Import */}
+                    {showDataInput && (
+                        <div className="data-input">
+                            <div className="instructions">
+                                💡 Paste your job crawler JSON output here. You can export from the crawler script or paste individual job objects.
+                            </div>
+                            <textarea
+                                value={jsonInput}
+                                onChange={(e) => setJsonInput(e.target.value)}
+                                placeholder='Paste JSON job data here, e.g. [{"title": "...", "company": "...", ...}]'
+                            />
+                            <div className="button-group">
+                                <button className="btn-primary" onClick={handleImportJSON}>
+                                    ✅ Import Jobs
+                                </button>
+                                <button className="btn-secondary" onClick={() => setShowDataInput(false)}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Controls */}
+                    <div className="controls">
+                        <div className="control-group">
+                            <div className="control-item">
+                                <label>Keywords (comma-separated)</label>
+                                <input
+                                    type="text"
+                                    value={keywords}
+                                    onChange={(e) => setKeywords(e.target.value)}
+                                    placeholder="e.g., Python, Data, AWS"
+                                />
+                            </div>
+                            
+                            <div className="control-item">
+                                <label>Location</label>
+                                <input
+                                    type="text"
+                                    value={locationFilter}
+                                    onChange={(e) => setLocationFilter(e.target.value)}
+                                    placeholder="e.g., Sydney"
+                                />
+                            </div>
+
+                            <div className="control-item">
+                                <label>Platform</label>
+                                <select value={platformFilter} onChange={(e) => setPlatformFilter(e.target.value)}>
+                                    <option value="all">All Platforms</option>
+                                    {platforms.map(p => (
+                                        <option key={p} value={p}>{p}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="control-item">
+                                <label>Status</label>
+                                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                                    <option value="all">All Statuses</option>
+                                    <option value="new">New</option>
+                                    <option value="interested">Interested</option>
+                                    <option value="applied">Applied</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="control-item">
+                            <label>Salary Range: ${salaryMin.toLocaleString()} - ${salaryMax.toLocaleString()}</label>
+                            <div className="range-container">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="500000"
+                                    step="10000"
+                                    value={salaryMin}
+                                    onChange={(e) => setSalaryMin(parseInt(e.target.value))}
+                                />
+                            </div>
+                            <div className="range-container">
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="500000"
+                                    step="10000"
+                                    value={salaryMax}
+                                    onChange={(e) => setSalaryMax(parseInt(e.target.value))}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="button-group" style={{marginTop: "15px"}}>
+                            <button className="btn-primary" onClick={() => setShowDataInput(!showDataInput)}>
+                                + Import Jobs
+                            </button>
+                            <button className="btn-secondary" onClick={() => {
+                                setLocationFilter("");
+                                setKeywords("");
+                                setStatusFilter("all");
+                                setPlatformFilter("all");
+                                setSalaryMin(0);
+                                setSalaryMax(500000);
+                            }}>
+                                Reset Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Jobs Grid */}
+                    {filteredJobs.length > 0 ? (
+                        <div className="jobs-container">
+                            {filteredJobs.map(job => (
+                                <div key={job.id} className={`job-card ${
+                                    job.relevance_score >= 75 ? "high-relevance" :
+                                    job.relevance_score >= 50 ? "medium-relevance" :
+                                    "low-relevance"
+                                }`}>
+                                    <div className="job-title">{job.title}</div>
+                                    <div className="job-company">{job.company}</div>
+
+                                    <div className="job-meta">
+                                        <div className="meta-item">📍 {job.location}</div>
+                                        <div className="meta-item">
+                                            💰 {job.salary || "Not disclosed"}
+                                        </div>
+                                        <div className="meta-item">
+                                            📅 {new Date(job.date_found).toLocaleDateString()}
+                                        </div>
+                                        <div>
+                                            <span className="badge badge-platform">{job.platform}</span>
+                                            {" "}
+                                            <span className={`badge badge-status`}>
+                                                {job.status}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="relevance-score">
+                                        <span>Match Score</span>
+                                        <span>{job.relevance_score.toFixed(0)}%</span>
+                                    </div>
+                                    <div className="relevance-bar">
+                                        <div className="relevance-fill" style={{width: `${job.relevance_score}%`}}></div>
+                                    </div>
+
+                                    <div className="job-actions">
+                                        <button 
+                                            className={`action-btn ${job.status === "applied" ? "applied" : ""}`}
+                                            onClick={() => updateJobStatus(job.id, job.status === "applied" ? "new" : "applied")}
+                                        >
+                                            {job.status === "applied" ? "✅ Applied" : "Apply"}
+                                        </button>
+                                        <button 
+                                            className="action-btn"
+                                            onClick={() => window.open(job.url, "_blank")}
+                                        >
+                                            View
+                                        </button>
+                                        <button 
+                                            className="action-btn"
+                                            onClick={() => deleteJob(job.id)}
+                                            style={{color: "#ef4444"}}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+
+                                    {job.notes && (
+                                        <div style={{marginTop: "10px", padding: "8px", background: "#f9fafb", borderRadius: "4px", fontSize: "12px"}}>
+                                            <strong>Notes:</strong> {job.notes}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="empty-state">
+                            <h2>No jobs match your filters</h2>
+                            <p>Click "Import Jobs" to add opportunities from your crawler</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<JobDashboard />);
+    </script>
+</body>
+</html>
