@@ -1,268 +1,90 @@
-# Job Crawler & Dashboard System
+# Job Opportunity Dashboard
+**Python · JSON data preparation · Browser-based reporting**
 
-A fully automated job opportunity crawler with intelligent analysis, salary filtering, and relevance scoring.
+A prototype for organising job opportunities, comparing them with keyword preferences and tracking application status.
 
-## What You Get
+The project combines a Python helper with a React dashboard delivered as a single HTML file. Job data is imported manually; the collection functions are scaffolding for future integrations.
 
-✅ **Python Crawler** - Fetches jobs from multiple platforms daily  
-✅ **Local Database** - Stores job data automatically  
-✅ **Interactive Dashboard** - Beautiful HTML interface with advanced filtering  
-✅ **Relevance Scoring** - AI-powered keyword matching (0-100%)  
-✅ **Application Tracking** - Mark jobs as applied, interested, or rejected  
-✅ **Salary Filtering** - Filter by minimum/maximum salary  
-✅ **Location-Based Search** - Find jobs near you  
+[Max's profile](https://github.com/HoangCuongMax) · [Analytics portfolio](https://docs.google.com/document/d/1Wpe37bPnb0mcX5V31LvC8BOflCZGgFB-xNno3ke_8qc)
 
-## Quick Start
+## What the project demonstrates
 
-### 1. Basic Setup
+- Structuring job records into a consistent JSON format.
+- Adding manual records and checking existing URLs for duplicates.
+- Calculating a transparent keyword-match score.
+- Filtering opportunities by location, salary, source and status.
+- Summarising filtered records and tracking application status in the dashboard.
 
-```bash
-# Make the crawler executable
-chmod +x job_crawler.py
+The score is the percentage of supplied keywords found in the title or description. It is a rule-based match score, not a trained AI model or a probability of suitability.
 
-# Create sample data directory
+## Try the dashboard
+
+1. Clone or download this repository.
+2. Open [`job_dashboard.html`](job_dashboard.html) in a browser.
+3. Select **Import Jobs** and paste the contents of [`sample_jobs.json`](sample_jobs.json).
+4. Enter comma-separated keywords and explore the filters.
+5. Use the status controls to organise opportunities.
+
+The dashboard loads React, React DOM and Babel from a public CDN, so it needs those resources to be available. It stores dashboard records in browser `localStorage`; the Python helper uses separate JSON files. There is no automatic synchronisation between them.
+
+## Use the Python helper
+
+Python 3 and `requests` are required by the current source.
+
+```sh
+git clone https://github.com/HoangCuongMax/JobSearchMax.git
+cd JobSearchMax
+python3 -m venv .venv
+```
+
+Activate the environment with `source .venv/bin/activate` on macOS/Linux, or `.venv\Scripts\Activate.ps1` in Windows PowerShell. Then:
+
+```sh
+python -m pip install requests
 python job_crawler.py
 ```
 
-This creates:
-- `job_data/jobs.json` - Your job database
-- `job_data/sources.json` - Your configured job URLs
+The entry point creates the local data directory and runs the scaffold routine. It does not automatically fetch or populate live job listings.
 
-### 2. Configure Job Sources
-
-Edit `job_data/sources.json`:
-
-```json
-{
-    "seek": [],
-    "indeed": [],
-    "linkedin": [],
-    "custom_urls": [
-        "https://careers.example.com/jobs",
-        "https://anothercompany.com/careers",
-        "https://jobboard.com.au/search?q=python"
-    ]
-}
-```
-
-### 3. Add Your First Jobs
-
-You have two options:
-
-**Option A: Manual Entry (Easiest)**
-
-In the dashboard (job_dashboard.html), click "Import Jobs" and paste JSON:
-
-```json
-[
-    {
-        "title": "Senior Python Developer",
-        "company": "TechCorp",
-        "location": "Sydney, NSW",
-        "salary": "$130,000 - $180,000",
-        "url": "https://careers.techcorp.com/jobs/123",
-        "platform": "linkedin",
-        "description": "Looking for Python expert with Django experience and AWS knowledge"
-    }
-]
-```
-
-**Option B: Job Alerts**
-
-Most job boards let you set up automated email alerts. When you receive alerts, you can:
-1. Export the job data as JSON
-2. Paste into the dashboard's import field
-3. Boom - all jobs are now tracked
-
-### 4. Set Up Daily Crawling
-
-#### On Windows (Task Scheduler):
-
-```batch
-# Create a .bat file called run_crawler.bat
-@echo off
-cd C:\path\to\job-crawler
-python job_crawler.py
-```
-
-Then:
-1. Open Task Scheduler
-2. Create Basic Task
-3. Set trigger: Daily at 9:00 AM
-4. Set action: Run `run_crawler.bat`
-
-#### On Mac/Linux (Cron):
-
-```bash
-# Edit your crontab
-crontab -e
-
-# Add this line to run daily at 9 AM:
-0 9 * * * /usr/bin/python3 /path/to/job_crawler.py
-
-# Or run every 6 hours:
-0 */6 * * * /usr/bin/python3 /path/to/job_crawler.py
-```
-
-### 5. Use the Dashboard
-
-1. **Open** `job_dashboard.html` in any web browser
-2. **Import Jobs** - Paste JSON data from your crawler
-3. **Filter & Analyze**:
-   - Enter keywords (Python, Data, AWS) for relevance scoring
-   - Filter by location, salary, platform
-   - See which jobs match your criteria best
-4. **Track Applications** - Mark jobs as Applied, Interested, or Rejected
-5. **Notes** - Add personal notes to each job
-
-## How It Works
-
-### Relevance Scoring
-
-The system calculates a match score (0-100%) based on:
-- How many of your keywords appear in the job title
-- How many keywords appear in the job description
-- Normalized to show which jobs fit your profile best
-
-**Example:**
-- You search for: "Python, Data, AWS"
-- Job mentions all three → **High relevance (75%+)** 🟢
-- Job mentions two → **Medium relevance (50-75%)** 🟡
-- Job mentions one → **Low relevance (<50%)** 🔴
-
-### Salary Filtering
-
-The system:
-- Parses salary ranges like "$120,000 - $160,000"
-- Filters jobs based on your salary preferences
-- Shows average salary for filtered results
-
-### Application Tracking
-
-Statuses:
-- **New** - Just discovered
-- **Interested** - Worth applying to
-- **Applied** - Already submitted
-- **Rejected** - Not a fit
-
-## File Structure
-
-```
-job-crawler/
-├── job_crawler.py           # Main crawler script
-├── job_dashboard.html       # Interactive dashboard (OPEN IN BROWSER)
-├── job_data/
-│   ├── jobs.json           # Your job database
-│   └── sources.json        # Job source URLs
-└── README.md               # This file
-```
-
-## Advanced Usage
-
-### Programmatic Job Addition
-
-In Python:
+For manual entry, use the helper from a Python session started in the repository folder:
 
 ```python
 from job_crawler import JobCrawler
 
 crawler = JobCrawler()
-
-# Add a single job
 crawler.add_manual_job({
-    "title": "Data Scientist",
-    "company": "AI Corp",
-    "location": "Melbourne, VIC",
-    "salary": "$110,000 - $150,000",
-    "url": "https://example.com/jobs/789",
-    "platform": "linkedin",
-    "description": "Machine learning expert needed for computer vision project"
+    "title": "Data Analyst",
+    "company": "Example organisation",
+    "location": "Darwin, NT",
+    "salary": "$80,000 - $100,000",
+    "url": "https://example.com/jobs/data-analyst",
+    "platform": "manual",
+    "description": "Power BI, SQL and Python reporting"
 })
-
-# Run the crawler
-crawler.run_daily_crawl()
+print(crawler.export_for_dashboard(["Power BI", "SQL", "Python"]))
 ```
 
-### Custom Crawling
+Paste the exported JSON into the dashboard to include the parsed salary fields and calculated scores.
 
-To add custom platform crawlers, extend the `JobCrawler` class:
+## Repository map
 
-```python
-def crawl_custom_site(self):
-    """Example custom crawler"""
-    import requests
-    from bs4 import BeautifulSoup
-    
-    response = requests.get("https://jobsite.com/listings")
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    for job_elem in soup.find_all('div', class_='job-listing'):
-        job = self.create_job_entry(
-            title=job_elem.find('h2').text,
-            company=job_elem.find('span', class_='company').text,
-            location=job_elem.find('span', class_='location').text,
-            salary=job_elem.find('span', class_='salary').text,
-            url=job_elem.find('a')['href'],
-            platform='custom_site',
-            description=job_elem.find('p').text
-        )
-        self.jobs.append(job)
-    
-    self.save_jobs()
-```
+| File | Purpose |
+| --- | --- |
+| [`job_crawler.py`](job_crawler.py) | Record creation, local JSON storage, simple salary parsing and keyword scoring |
+| [`job_dashboard.html`](job_dashboard.html) | Import, filtering, summaries and application tracking |
+| [`sample_jobs.json`](sample_jobs.json) | Example records for a demonstration |
+| [`sources.json.example`](sources.json.example) | Example source configuration |
+| [`QUICKSTART.txt`](QUICKSTART.txt) | Earlier setup notes; use this README for current scope and limitations |
 
-## For Better Automated Crawling
+## Current scope & limitations
 
-Since most job boards restrict bot access, I recommend:
+- Seek and Indeed helpers print suggested search URLs; the custom-URL crawler is a placeholder.
+- Scheduling the helper does not turn these placeholders into working ingestion connectors.
+- Salary parsing is simple numeric extraction and does not normalise currencies, hourly rates or shorthand such as "100k".
+- Keyword scores depend on the supplied terms and do not measure professional suitability.
+- Data is stored separately in the browser and local files. Back up records before clearing browser storage.
+- Import validation, persistence behaviour and a fully tested end-to-end workflow need further development.
 
-1. **Use job alert emails** - Have sites email you matches daily
-2. **Export to JSON** - Use browser extensions or manual copy-paste
-3. **Paste into dashboard** - Takes 30 seconds per batch
+## Next development steps
 
-Popular extensions:
-- **Save to Pocket** - Clips articles/jobs for later
-- **Web Scraper** - Visual scraping without coding
-- **Webhooks with Zapier** - IFTTT-style job automation
-
-## Data Privacy
-
-- All data is stored **locally** on your machine
-- No cloud uploads or tracking
-- Dashboard works **offline**
-- You own your job data
-
-## Troubleshooting
-
-**Q: Dashboard won't load?**
-A: Make sure you have `job_data/jobs.json` file. It should be created automatically on first run.
-
-**Q: Jobs aren't importing?**
-A: Make sure your JSON is valid. Test at https://jsonlint.com/
-
-**Q: How do I backup my data?**
-A: Copy the entire `job_data/` folder to another location.
-
-**Q: Can I share this with others?**
-A: Yes! Share the HTML file. Each person gets their own local data via browser storage.
-
-## Next Steps
-
-1. ✅ Set up daily crawling (Task Scheduler or Cron)
-2. ✅ Configure your job source URLs in `sources.json`
-3. ✅ Add your first batch of jobs via the dashboard
-4. ✅ Set your keywords and filters
-5. ✅ Start applying to high-relevance matches!
-
-## Tips for Best Results
-
-📌 **Keywords**: Be specific. "Python Django AWS" gets better scores than "IT"  
-📌 **Updates**: Run crawler daily so you catch new postings fast  
-📌 **Notes**: Add interview tips or company research to each job  
-📌 **Filter Often**: Salary and location filters save hours of scrolling  
-📌 **Track**: Mark applications so you don't apply twice  
-
----
-
-**Happy job hunting! 🚀**
-
-For questions or improvements, check the source code - it's well commented.
+Add schema validation, automated checks for imports and persistence, improved salary normalisation, and a documented permitted ingestion source. Measure the resulting workflow before claiming time savings or collection coverage.
